@@ -29,7 +29,7 @@ export class SubExtractor {
         })
     }
 
-    private async extractSub(command: FfmpegCommand, subMetadata: FfprobeStream) {
+    private async extractSub(command: FfmpegCommand, subMetadata: FfprobeStream, outputPath: string): Promise<void> {
         return new Promise((resolve, reject) => {
             command.on('start', (cmd) => {
                 console.log('>> ffmpeg run with:\n', cmd);
@@ -51,20 +51,20 @@ export class SubExtractor {
             });
 
             command.outputOptions(
-                '-map', `0:${subMetadata.index}`,
-                `sub.${subMetadata.codec_name}`
-            ).run();
+                '-map', `0:${subMetadata.index}`
+            )
+            .output(`${outputPath}/sub.${subMetadata.codec_name}`)
+            .run();
         })
     }
 
     async execute(fileTarget: string, outputPath: string) {
         try {
-            const targetCmd = this.command.input(fileTarget).output(outputPath);
+            const targetCmd = this.command.input(fileTarget);
     
             const engSubMeta = await this.findSubMetadata(targetCmd, ['eng', 'en']);
-            console.log('>> engSub\n', engSubMeta);
     
-            await this.extractSub(targetCmd, engSubMeta)
+            await this.extractSub(targetCmd, engSubMeta, outputPath);
         } catch(err) {
             console.log('subExtractor err', err);
         }
