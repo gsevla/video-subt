@@ -1,5 +1,8 @@
 # How to?
 
+###### only the extractor is exposed for now. 
+###### the main idea behing the translator is to use in premise GPT model to translate the extracted subtitles.
+
 ## Development
 
 #### SubExtractor
